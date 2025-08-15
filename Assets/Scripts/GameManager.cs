@@ -38,14 +38,12 @@ public class GameManager : MonoBehaviour
     public AudioClip groceryStoreMusic;
     public AudioClip alertSound;
     private AudioSource musicSource;
-    private AudioSource sfxSource;
-    
     [Header("Prefabs")]
     public GameObject[] shopperPrefabs;
     public GameObject[] shoplifterPrefabs;
     public GameObject[] distractorPrefabs;
     public Transform[] spawnPoints;
-    
+    public Transform exitPoint;
     private bool storeEntered = false;
     private Coroutine alertCoroutine;
     
@@ -63,7 +61,6 @@ public class GameManager : MonoBehaviour
         if (sources.Length >= 2)
         {
             musicSource = sources[0];
-            sfxSource = sources[1];
         }
     }
     
@@ -86,12 +83,12 @@ public class GameManager : MonoBehaviour
     {
         if (!gameActive || !storeEntered) return;
         
-        // Update timer
+        // Update timer 
         currentTime -= Time.deltaTime;
         if (currentTime <= 0)
         {
             currentTime = 0;
-            GameOver("Time's up!");
+            GameOver("Shift is over.");
         }
         
         UpdateUI();
@@ -188,9 +185,9 @@ public class GameManager : MonoBehaviour
     public void ItemStolen(string itemName)
     {
         ShowAlert($"{itemName} stolen!", Color.red);
-        
-        if (alertSound != null && sfxSource != null)
-            sfxSource.PlayOneShot(alertSound);
+
+        if (alertSound != null && musicSource != null)
+            musicSource.PlayOneShot(alertSound);
     }
     
     void ShowAlert(string message, Color color)
@@ -199,6 +196,7 @@ public class GameManager : MonoBehaviour
         {
             alertText.text = message;
             alertText.color = color;
+            alertText.gameObject.SetActive(true);
             
             if (alertCoroutine != null)
                 StopCoroutine(alertCoroutine);
@@ -210,7 +208,11 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         if (alertText != null)
+        {
             alertText.text = "";
+            alertText.gameObject.SetActive(false);
+        }
+        alertCoroutine = null;
     }
     
     void UpdateUI()
@@ -225,7 +227,6 @@ public class GameManager : MonoBehaviour
             int seconds = Mathf.FloorToInt(currentTime % 60);
             timerText.text = $"Time: {minutes:00}:{seconds:00}";
         }
-        
     }
     
     void GameOver(string reason)
@@ -253,6 +254,6 @@ public class GameManager : MonoBehaviour
     public void GoToMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MenuScene");
+        SceneManager.LoadScene("01_MainMenu");
     }
 }

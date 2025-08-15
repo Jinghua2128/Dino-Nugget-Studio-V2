@@ -6,7 +6,11 @@ public class MainMenuManager : MonoBehaviour
 {
     [Header("UI References")]
     public Button startGameButton;
+    public Button settingsButton;
     public Button quitButton;
+    public GameObject mainMenuPanel;
+    public GameObject settingsPanel;
+    public Button backToMainButton;
     
     [Header("Audio")]
     public AudioClip menuMusic;
@@ -27,13 +31,41 @@ public class MainMenuManager : MonoBehaviour
         // Setup button listeners
         if (startGameButton != null)
             startGameButton.onClick.AddListener(StartGame);
+        if (settingsButton != null)
+            settingsButton.onClick.AddListener(OpenSettings);
         if (quitButton != null)
             quitButton.onClick.AddListener(QuitGame);
+        if (backToMainButton != null)
+            backToMainButton.onClick.AddListener(BackToMainMenu);
+        
+        // Initialize panels
+        ShowMainMenu();
     }
     
     public void StartGame()
     {
         SceneManager.LoadScene("GameScene");
+    }
+    
+    public void OpenSettings()
+    {
+        if (mainMenuPanel != null)
+            mainMenuPanel.SetActive(false);
+        if (settingsPanel != null)
+            settingsPanel.SetActive(true);
+    }
+    
+    public void BackToMainMenu()
+    {
+        ShowMainMenu();
+    }
+    
+    void ShowMainMenu()
+    {
+        if (mainMenuPanel != null)
+            mainMenuPanel.SetActive(true);
+        if (settingsPanel != null)
+            settingsPanel.SetActive(false);
     }
     
     public void QuitGame()
